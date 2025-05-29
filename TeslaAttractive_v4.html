@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow">
+    <title>週次定例｜Teslaの魅力</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", "Noto Sans JP", sans-serif;
+        background-color: #121212;
+        color: #e0e0e0;
+      }
+      .tesla-red {
+        color: #cc0000;
+      }
+      .section-divider {
+        border-top: 1px solid #444444;
+      }
+      .modal {
+        /* 動画再生以外の汎用モーダル用 */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+      .modal.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      .modal-content {
+        background-color: #1e1e1e;
+        padding: 2rem;
+        border-radius: 0.5rem;
+        max-width: 90%;
+        width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+      }
+      .modal-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #e0e0e0;
+      }
+      .chart-container {
+        position: relative;
+        margin: auto;
+        height: 300px;
+        width: 100%;
+        max-width: 600px;
+      }
+      .icon-placeholder {
+        width: 40px;
+        height: 40px;
+        background-color: #333;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        flex-shrink: 0;
+      }
+      .video-placeholder,
+      .image-placeholder-container {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        background-color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        color: #ccc;
+        font-size: 0.9rem;
+        text-align: center;
+        padding: 0.5rem;
+        overflow: hidden;
+      }
+      .image-placeholder-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .modal-content::-webkit-scrollbar {
+        width: 8px;
+      }
+      .modal-content::-webkit-scrollbar-track {
+        background: #2a2a2a;
+        border-radius: 10px;
+      }
+      .modal-content::-webkit-scrollbar-thumb {
+        background: #555;
+        border-radius: 10px;
+      }
+      .modal-content::-webkit-scrollbar-thumb:hover {
+        background: #777;
+      }
+      .card {
+        background-color: #1e1e1e;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        transition: transform 0.2s ease-in-out;
+        display: flex;
+        flex-direction: column;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+      }
+      .single-column-card-content {
+        display: flex;
+        align-items: center;
+      }
+      .single-column-card-content .icon-placeholder {
+        margin-bottom: 0;
+      }
+      .single-column-card-content > div:last-child {
+        flex-grow: 1;
+      }
+    </style>
+  </head>
+  <body class="antialiased">
+    <header class="py-6 px-4 md:px-8 text-center">
+      <a
+        href="#"
+        class="text-3xl font-bold tracking-wider"
+        style="text-decoration: none"
+        >2025.05.29 週次定例 藤川</a
+      >
+    </header>
+
+    <section
+      id="title-area"
+      class="pt-4 pb-12 px-4 md:px-8 text-center cursor-pointer"
+      onclick="showModal('missionModal')"
+    >
+      <h1 class="text-4xl md:text-5xl font-bold mb-2">
+        <span class="tesla-red">Tesla</span>の魅力って？
+      </h1>
+      <p class="text-lg md:text-xl text-gray-400">
+        “クルマの体験” だけでなく、Teslaという ”企業のおもしろさ”
+        を少しでも感じてもらえたらと思います。<br class="md:hidden" />
+      </p>
+    </section>
+    <div class="py-4 px-4 md:px-8 text-center">
+      <img
+        src="images\TopImage.png"
+        alt="Tesla トップイメージ"
+        class="mx-auto rounded-lg max-w-full h-auto"
+        style="max-height: 400px"
+      />
+      <!-- <p class="text-sm text-gray-500 mt-2">（イメージ）</p> -->
+    </div>
+    <div class="section-divider my-8 mx-auto w-3/4 md:w-1/2"></div>
+
+    <section id="ai-company" class="py-8 px-4 md:px-8">
+      <h2 class="text-3xl font-bold text-center mb-8">
+        Tesla =
+        <span class="tesla-red">AIカンパニー</span
+        >：莫大なAI開発投資による技術進化と体験の進化
+      </h2>
+      <div class="grid grid-cols-1 gap-8 md:max-w-3xl md:mx-auto">
+        <div class="card">
+          <h3 class="text-xl font-semibold mb-3">▼ 新たなの運転体験</h3>
+          <div
+            id="userVideoInlineContainer"
+            class="video-placeholder"
+            onclick="playInlineUserVideo('userVideoInlineContainer', 'kEoM4jNSKoM')"
+          >
+            <img src="https://img.youtube.com/vi/kEoM4jNSKoM/hqdefault.jpg" 
+                             alt="Model 3 体験動画 サムネイル" 
+                             style="width:100%; height:100%; object-fit:cover; border-radius:0.5rem;" 
+                             onerror="this.style.display='none'; this.parentElement.innerHTML += '<span>あなたのModel 3 体験動画 (15秒)<br>- クリックで再生 -</span>';">
+          </div>
+          <p class="mt-2 text-sm text-gray-400">
+            乗り降りしてるだけですが、シームレスな体験と車内での過ごし方はこんな感じ。
+          </p>
+        </div>
+
+        <div class="card">
+          <h3 class="text-xl font-semibold mb-3">
+            ▼ FSD (Full Self-Driving) - 自動運転の ”今”
+          </h3>
+          <div class="single-column-card-content mb-2">
+            <div class="icon-placeholder">🧠</div>
+            <div>
+              <p>
+                <strong>クルマが自分で状況判断！</strong>
+                End-to-EndのAIで、30万行のコードから単一NNへ。
+              </p>
+            </div>
+          </div>
+          <div class="single-column-card-content mb-3">
+            <div class="icon-placeholder">🇨🇳</div>
+            <div>
+              <p>
+                <strong>中国市場でも展開開始！</strong
+                >現地の交通文化に合わせたローカライズも。
+              </p>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 mb-3">
+            <div
+              id="fsdInlineVideoContainer1"
+              class="video-placeholder"
+              onclick="playInlineYouTubeVideo('fsdInlineVideoContainer1', '3DWz1TD-VZg')"
+            >
+              <img src="https://img.youtube.com/vi/3DWz1TD-VZg/hqdefault.jpg" 
+                                 alt="FSD 中国走行動画 1 サムネイル" 
+                                 style="width:100%; height:100%; object-fit:cover; border-radius:0.5rem;" 
+                                 onerror="this.style.display='none'; this.parentElement.innerHTML += '<span>FSD 中国走行動画 1<br>- クリックで再生 -</span>';">
+            </div>
+            <div
+              id="fsdInlineVideoContainer2"
+              class="video-placeholder"
+              onclick="playInlineYouTubeVideo('fsdInlineVideoContainer2', 'LFYs6Ifg_lI')"
+            >
+             <img src="https://img.youtube.com/vi/LFYs6Ifg_lI/hqdefault.jpg" 
+                                 alt="FSD アメリカ走行動画 ２ サムネイル" 
+                                 style="width:100%; height:100%; object-fit:cover; border-radius:0.5rem;" 
+                                 onerror="this.style.display='none'; this.parentElement.innerHTML += '<span>FSD 中国走行動画 1<br>- クリックで再生 -</span>';">
+            </div>
+          </div>
+          <button
+            class="bg-tesla-red/80 hover:bg-tesla-red text-white font-semibold py-2 px-4 rounded-lg text-sm self-start mt-auto"
+            onclick="showModal('fsdModal')"
+          >
+            End-to-End AIとは？
+          </button>
+        </div>
+
+        <div class="card">
+          <h3 class="text-xl font-semibold mb-3">
+            ▼ Dojo - FSDとロボット学習専用の超強力スパコン
+          </h3>
+          <div class="single-column-card-content mb-2">
+            <div class="icon-placeholder">💻</div>
+            <div>
+              <p>
+                AIへの投資は1.6兆円以上で、規模は130MWから500MWへの拡張計画も進行中。（世界の平均データセンター1館＝1〜5
+                MW）
+              </p>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 my-3">
+            <div class="image-placeholder-container">
+              <img
+                src="https://i.ytimg.com/vi/HmbvFOOYFa4/maxresdefault.jpg"
+                alt="Dojo Cluster Image 1"
+                onerror="this.parentElement.innerHTML = '<span>Dojo Cluster イメージ</span>';"
+              />
+            </div>
+            <div class="image-placeholder-container">
+              <img
+                src="https://dgtlinfra.com/wp-content/uploads/2024/07/Tesla-Data-Center-Elon-Musk-Rows-of-Silver-and-Black-Server-Racks-with-Blue-Lights-1024x574.jpg"
+                alt="Dojo D1 Chip Image"
+                onerror="this.parentElement.innerHTML = '<span>Dojo D1 Chip イメージ</span>';"
+              />
+            </div>
+          </div>
+          <button
+            class="bg-tesla-red/80 hover:bg-tesla-red text-white font-semibold py-2 px-4 rounded-lg text-sm self-start mt-auto"
+            onclick="showModal('dojoModal')"
+          >
+            Dojoの処理能力とは？
+          </button>
+        </div>
+
+        <div class="card">
+          <h3 class="text-xl font-semibold mb-3">▼ Optimus - 人型AIロボット</h3>
+          <div
+            id="optimusInlineVideoContainer"
+            class="video-placeholder mb-2"
+            onclick="playInlineYouTubeVideo('optimusInlineVideoContainer', 'DicNKZyCnJc')"
+          >
+                                   <img src="https://img.youtube.com/vi/DicNKZyCnJc/hqdefault.jpg" 
+                              alt="Optimus ダンス動画 サムネイル" 
+                              style="width:100%; height:100%; object-fit:cover; border-radius:0.5rem;" 
+                              onerror="this.style.display='none'; this.parentElement.innerHTML += '<span>Optimus ダンス動画<br>- クリックで再生 -</span>';">
+                         </div>
+            <!-- <span>Optimus ダンス動画<br />- クリックで再生 -</span> -->
+          </div>
+          <p class="text-sm text-gray-400 mb-2">
+            FSD技術を応用！現実でテストせずシミュレーションだけで学習し、軽快なダンスも！
+          </p>
+          <p class="text-sm mb-2">
+            <strong
+              >2025年中に数千台生産、自社工場で稼働開始。2026年商用化目標！</strong
+            >
+            労働集約型作業の自動化を目指す。
+          </p>
+          <button
+            class="bg-tesla-red/80 hover:bg-tesla-red text-white font-semibold py-2 px-4 rounded-lg text-sm self-start mt-auto"
+            onclick="showModal('optimusFutureModal')"
+          >
+            Optimusの未来の活躍場面
+          </button>
+        </div>
+      </div>
+    </section>
+    <div class="section-divider my-8 mx-auto w-3/4 md:w-1/2"></div>
+
+    <section id="ev-market" class="py-8 px-4 md:px-8">
+      <h2 class="text-3xl font-bold text-center mb-8">
+        「EVは下火」は本当？<span class="tesla-red">市場の真実</span>を見る
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        <div class="card">
+          <h3 class="text-xl font-semibold mb-3 text-center">
+            🌍 世界市場：EVシフト加速中
+          </h3>
+          <div class="chart-container"><canvas id="worldEvChart"></canvas></div>
+          <p class="mt-3 text-sm text-gray-400 text-center">
+            世界ではEVシフトが加速！2025年Q1もEV販売は前年同期比29%増と力強い成長。
+          </p>
+        </div>
+        <div class="card">
+          <h3 class="text-xl font-semibold mb-3 text-center">
+            🇯🇵 日本市場：伸び悩みの声も
+          </h3>
+          <div class="chart-container"><canvas id="japanEvChart"></canvas></div>
+          <p class="mt-3 text-sm text-gray-400 text-center">
+            日本では伸び悩みの声も。2025年Q1
+            EVシェアは2.46%（前年同期比減）。しかし、世界との差は関心の差？
+          </p>
+          <div class="text-center mt-4">
+            <button
+              class="bg-tesla-red/80 hover:bg-tesla-red text-white font-semibold py-2 px-4 rounded-lg text-sm"
+              onclick="showModal('japanEvModal')"
+            >
+              なぜ日本は遅れている？
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="section-divider my-8 mx-auto w-3/4 md:w-1/2"></div>
+
+    <section id="ad-spend" class="py-8 px-4 md:px-8">
+      <h2 class="text-3xl font-bold text-center mb-8">
+        なぜTeslaは広告なしで<span class="tesla-red">成長</span>できるのか？
+      </h2>
+      <div class="card max-w-3xl mx-auto">
+        <div class="chart-container" style="height: 350px">
+          <canvas id="adSpendChart"></canvas>
+        </div>
+        <p class="mt-4 text-sm text-gray-400 text-center">
+          Teslaの広告費は他社のわずか数百分の一！それでも販売台数を伸ばし続ける秘密は？<br />(2023年データ。1ドル=155円換算。Tesla:
+          約640万ドル/約9.9億円、GM: 約36億ドル/約5580億円、Toyota:
+          約44億ドル/約6820億円。)
+        </p>
+      </div>
+    </section>
+    <div class="section-divider my-8 mx-auto w-3/4 md:w-1/2"></div>
+
+    <section id="buzz-strategy" class="py-8 px-4 md:px-8">
+      <h2 class="text-3xl font-bold text-center mb-8">
+        広告に頼らず <span class="tesla-red"
+          >“共有したくなる体験” × “CEOの影響力” × “UGC” </span>が成長エンジン</span
+        >
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div
+          class="card text-center cursor-pointer"
+          onclick="showModal('otaModal')"
+        >
+          <div class="icon-placeholder mx-auto mb-3">📡</div>
+          <h3 class="text-lg font-semibold mb-1">車が進化し続けるアップデート</h3>
+          <p class="text-sm text-gray-400">どんどん安全になる、走行距離+10Kmなど</p>
+        </div>
+        <div
+          class="card text-center cursor-pointer"
+          onclick="showModal('elonModal')"
+        >
+          <div class="icon-placeholder mx-auto mb-3">🐦</div>
+          <h3 class="text-lg font-semibold mb-1">イーロン・マスクのX発信</h3>
+          <p class="text-sm text-gray-400">直後に検索トラフィックは5倍に</p>
+        </div>
+        <div
+          class="card text-center cursor-pointer"
+          onclick="showModal('eventModal')"
+        >
+          <div class="icon-placeholder mx-auto mb-3">🎉</div>
+          <h3 class="text-lg font-semibold mb-1">デリバリーイベント等でUGC量産</h3>
+          <p class="text-sm text-gray-400">納車はお祭り！ライブ配信・関連動画急増</p>
+        </div>
+        <div
+          class="card text-center cursor-pointer"
+          onclick="showModal('referralModal')"
+        >
+          <div class="icon-placeholder mx-auto mb-3">🤝</div>
+          <h3 class="text-lg font-semibold mb-1">紹介プログラム</h3>
+          <p class="text-sm text-gray-400">購入の26%が紹介経由。</p>
+        </div>
+      </div>
+    </section>
+    <div class="section-divider my-8 mx-auto w-3/4 md:w-1/2"></div>
+
+    <section id="challenges" class="py-8 px-4 md:px-8">
+      <h2 class="text-3xl font-bold text-center mb-8">
+        Teslaが<span class="tesla-red">向き合う課題</span>
+      </h2>
+      <div class="max-w-2xl mx-auto space-y-4">
+        <div
+          class="card cursor-pointer"
+          onclick="showModal('fsdChallengeModal')"
+        >
+          <p class="text-sm">FSDの進化と安全性への期待と議論。</p>
+        </div>
+        <div
+          class="card cursor-pointer"
+          onclick="showModal('competitionModal')"
+        >
+          <p class="text-sm">生産立ち上げやグローバル競争激化。</p>
+        </div>
+      </div>
+      <p class="mt-6 text-center text-gray-400">
+        Teslaは常に革新に挑戦し、批判にも真摯に向き合いながら成長を続けています。
+      </p>
+    </section>
+    <div class="section-divider my-8 mx-auto w-3/4 md:w-1/2"></div>
+
+    <footer class="py-12 px-4 md:px-8 text-center text-gray-500">
+      <div class="mb-6">
+        <h3 class="text-xl font-semibold tesla-red mb-3">
+          Teslaの未来に、あなたも触れてみませんか？
+        </h3>
+        <div
+          class="flex flex-col sm:flex-row justify-center items-center gap-4"
+        >
+          <a
+            href="https://www.tesla.com/ja_jp/drive"
+            target="_blank"
+            class="bg-tesla-red/80 hover:bg-tesla-red text-white font-semibold py-2 px-6 rounded-lg"
+            >まずは試乗体験を予約する</a
+          >
+          <a
+            href="https://twitter.com/Tesla"
+            target="_blank"
+            class="border border-tesla-red/80 hover:bg-tesla-red/20 text-tesla-red font-semibold py-2 px-6 rounded-lg"
+            >X公式アカウント</a
+          >
+          <!-- <button
+            onclick="showModal('qrModal')"
+            class="border border-gray-500 hover:bg-gray-700 text-gray-400 font-semibold py-2 px-6 rounded-lg"
+          >
+            今日のプレゼン資料を見る
+          </button> -->
+                    <a
+            href="https://ts.la/satoshi902420"
+            target="_blank"
+            class="bg-tesla-red/80 hover:bg-tesla-red text-white font-semibold py-2 px-6 rounded-lg"
+            >3か月のFSD特典付きでオーダーする</a
+          >
+        </div>
+      </div>
+      <p class="text-xs">
+        データ出典：IEA, 経産省EV統計, WSJ, Statista, WARC, Brandwatch, Tesla
+        10-K, Google Trends, YouTube Data等
+      </p>
+    </footer>
+
+    <div id="missionModal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('missionModal')">×</span>
+        <h3 class="text-2xl font-bold mb-4 tesla-red">Teslaのミッション</h3>
+        <p class="text-lg">「持続可能なエネルギーへ、世界の移行を加速する」</p>
+      </div>
+    </div>
+    <div id="fsdModal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('fsdModal')">×</span>
+        <h3 class="text-2xl font-bold mb-4 tesla-red">End-to-End AIとは？</h3>
+        <p>
+          センサーからの生データを直接運転操作に変換する単一AIモデル。人間のように柔軟な運転を目指す。
+        </p>
+      </div>
+    </div>
+    <div id="dojoModal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('dojoModal')">×</span>
+        <h3 class="text-2xl font-bold mb-4 tesla-red">Dojoの処理能力</h3>
+        <p>
+          自動運転AI訓練特化のスパコン。ペタバイト級データを処理しエクサフロップス級の計算能力を目指す。
+        </p>
+      </div>
+    </div>
+    <div id="optimusFutureModal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('optimusFutureModal')"
+          >×</span
+        >
+        <h3 class="text-2xl font-bold mb-4 tesla-red">Optimusの未来</h3>
+        <p>
+          工場作業、物流、災害救助、家庭内支援など多岐にわたる分野での活躍期待。
+        </p>
+      </div>
+    </div>
+    <div id="japanEvModal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('japanEvModal')">×</span>
+        <h3 class="text-2xl font-bold mb-4 tesla-red">日本のEV普及</h3>
+        <p>
+          充電インフラ、車種選択肢、価格、航続距離不安などが要因。状況は変化中。
+        </p>
+      </div>
+    </div>
+    <div id="otaModal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('otaModal')">×</span>
+        <h3 class="text-2xl font-bold mb-4 tesla-red">OTAアップデート</h3>
+        <p>納車後も新機能追加や改善。「購入後も進化し続ける車」。</p>
+      </div>
+    </div>
+    <div id="elonModal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('elonModal')">×</span>
+        <h3 class="text-2xl font-bold mb-4 tesla-red">
+          イーロン・マスク氏のX発信
+        </h3>
+        <p>CEO自ら情報発信。新製品情報、ユーザー対話、時に株価にも影響。</p>
+      </div>
+    </div>
+    <div id="referralModal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('referralModal')">×</span>
+        <h3 class="text-2xl font-bold mb-4 tesla-red">紹介プログラム</h3>
+        <p>
+          既存オーナー経由で新規顧客獲得。双方に特典。2023年購入の約26%が紹介経由。
+        </p>
+      </div>
+    </div>
+    <div id="eventModal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('eventModal')">×</span>
+        <h3 class="text-2xl font-bold mb-4 tesla-red">デリバリーイベント</h3>
+        <p>
+          新モデル発表等で華やかなイベント。メディア露出で話題化、ブランドロイヤルティ向上。
+        </p>
+      </div>
+    </div>
+    <div id="fsdChallengeModal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('fsdChallengeModal')"
+          >×</span
+        >
+        <h3 class="text-2xl font-bold mb-4 tesla-red">FSDの課題</h3>
+        <p>技術的課題、ベータ版提供、規制当局監視などが課題。</p>
+      </div>
+    </div>
+    <div id="competitionModal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('competitionModal')"
+          >×</span
+        >
+        <h3 class="text-2xl font-bold mb-4 tesla-red">競争とその他の課題</h3>
+        <p>中国を筆頭に競争激化、サプライチェーン、CEO依存リスクなどが課題。</p>
+      </div>
+    </div>
+    <div id="qrModal" class="modal">
+      <div class="modal-content text-center">
+        <span class="modal-close" onclick="closeModal('qrModal')">×</span>
+        <h3 class="text-2xl font-bold mb-4 tesla-red">今日のプレゼン資料</h3>
+        <img
+          src="https://placehold.co/200x200/FFFFFF/000000?text=QR+Code+Here"
+          alt="QR Code"
+          class="mx-auto my-4"
+        />
+        <p class="text-sm">（QRコードとURL）</p>
+      </div>
+    </div>
+
+    <script>
+      // モーダル表示・非表示制御 (動画再生以外の汎用モーダル用)
+      function showModal(modalId) {
+        document.getElementById(modalId).classList.add("active");
+      }
+      function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove("active");
+      }
+
+      // インラインでのYouTube動画再生 (FSD, Optimus共通)
+      function playInlineYouTubeVideo(containerId, videoId) {
+        const videoContainer = document.getElementById(containerId);
+        if (videoContainer) {
+          if (videoId && !videoId.toUpperCase().startsWith("YOUR_")) {
+            // "YOUR_"で始まらないIDは有効とみなす
+            videoContainer.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&enablejsapi=1&rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+            videoContainer.style.cursor = "default";
+            videoContainer.onclick = null;
+          } else {
+            videoContainer.innerHTML = `<p class="text-white text-center p-4">有効なYouTube動画IDを<br>HTMLコード内で指定してください。</p>`;
+            videoContainer.style.cursor = "default";
+          }
+        }
+      }
+
+      // インラインでのユーザー動画再生 (新時代の運転体験用 - <video>タグ)
+      function playInlineUserVideo(containerId, videoSrc) {
+        const videoContainer = document.getElementById(containerId);
+        if (videoContainer) {
+          if (
+            videoSrc &&
+            videoSrc.toUpperCase() !== "YOUR_MODEL3_VIDEO_SRC" &&
+            videoSrc !== ""
+          ) {
+            videoContainer.innerHTML = `<video width="100%" height="100%" controls autoplay src="${videoSrc}"><p>お使いのブラウザはビデオタグをサポートしていません。動画ソースが正しいか確認してください。</p></video>`;
+          } else {
+            videoContainer.innerHTML = `<p class="text-white text-center p-4">有効な動画ファイルパスを<br>HTMLコード内で指定してください。<br>(例: src="videos/model3.mp4")</p>`;
+          }
+          videoContainer.style.cursor = "default";
+          videoContainer.onclick = null;
+        }
+      }
+
+      // Escapeキーでモーダルを閉じる (動画再生以外の汎用モーダル用)
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          document.querySelectorAll(".modal.active").forEach((modal) => {
+            modal.classList.remove("active");
+          });
+        }
+      });
+
+      // モーダル外クリックで閉じる (動画再生以外の汎用モーダル用)
+      document.querySelectorAll(".modal").forEach((modal) => {
+        modal.addEventListener("click", function (event) {
+          if (event.target === modal) {
+            modal.classList.remove("active");
+          }
+        });
+      });
+
+      // チャート描画 (変更なし)
+      const evYears = [2018, 2019, 2020, 2021, 2022, 2023, 2024];
+      const worldEvData = {
+        ev: [2.3, 2.5, 4.2, 8.7, 14, 18, 20],
+        bev: [1.4, 1.7, 3.4, 6.6, 10, 14, 15],
+      };
+      const japanEvData = {
+        ev: [0.7, 0.8, 0.9, 1.0, 1.7, 3.5, 2.8],
+        bev: [0.3, 0.35, 0.4, 0.5, 1.0, 1.9, 1.5],
+      };
+
+      const baseChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function (v) {
+                return v + "%";
+              },
+              color: "#E0E0E0",
+            },
+            grid: { color: "#444444" },
+          },
+          x: { ticks: { color: "#E0E0E0" }, grid: { color: "#444444" } },
+        },
+        plugins: {
+          legend: { labels: { color: "#E0E0E0" } },
+          tooltip: {
+            callbacks: {
+              label: function (c) {
+                let l = c.dataset.label || "";
+                if (l) l += ": ";
+                if (c.parsed.y !== null) l += c.parsed.y + "%";
+                return l;
+              },
+            },
+          },
+        },
+      };
+      const japanChartOptions = JSON.parse(JSON.stringify(baseChartOptions));
+      japanChartOptions.scales.y.max = 20;
+
+      if (document.getElementById("worldEvChart"))
+        new Chart(document.getElementById("worldEvChart"), {
+          type: "line",
+          data: {
+            labels: evYears,
+            datasets: [
+              {
+                label: "世界 EVシェア",
+                data: worldEvData.ev,
+                borderColor: "#cc0000",
+                backgroundColor: "rgba(204,0,0,0.1)",
+                tension: 0.1,
+                fill: true,
+              },
+              {
+                label: "世界 BEVシェア",
+                data: worldEvData.bev,
+                borderColor: "#ff6666",
+                backgroundColor: "rgba(255,102,102,0.1)",
+                tension: 0.1,
+                fill: true,
+              },
+            ],
+          },
+          options: baseChartOptions,
+        });
+      if (document.getElementById("japanEvChart"))
+        new Chart(document.getElementById("japanEvChart"), {
+          type: "line",
+          data: {
+            labels: evYears,
+            datasets: [
+              {
+                label: "日本 EVシェア",
+                data: japanEvData.ev,
+                borderColor: "#007acc",
+                backgroundColor: "rgba(0,122,204,0.1)",
+                tension: 0.1,
+                fill: true,
+              },
+              {
+                label: "日本 BEVシェア",
+                data: japanEvData.bev,
+                borderColor: "#66b3ff",
+                backgroundColor: "rgba(102,179,255,0.1)",
+                tension: 0.1,
+                fill: true,
+              },
+            ],
+          },
+          options: japanChartOptions,
+        });
+
+      const JPY_PER_USD = 155;
+      const adSpendValuesUSD = { tesla: 0.0064, gm: 3.6, toyota: 4.4 };
+
+      const adSpendChartData = {
+        labels: ["Tesla", "GM", "Toyota"],
+        datasets: [
+          {
+            label: "広告費 (ドル)",
+            data: [
+              adSpendValuesUSD.tesla * 1000000000,
+              adSpendValuesUSD.gm * 1000000000,
+              adSpendValuesUSD.toyota * 1000000000,
+            ],
+            backgroundColor: [
+              "rgba(204,0,0,0.7)",
+              "rgba(54,162,235,0.7)",
+              "rgba(255,206,86,0.7)",
+            ],
+            borderColor: [
+              "rgba(204,0,0,1)",
+              "rgba(54,162,235,1)",
+              "rgba(255,206,86,1)",
+            ],
+            borderWidth: 1,
+          },
+        ],
+      };
+
+      if (document.getElementById("adSpendChart"))
+        new Chart(document.getElementById("adSpendChart"), {
+          type: "bar",
+          data: adSpendChartData,
+          options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                type: "logarithmic",
+                title: {
+                  display: true,
+                  text: "広告費 (ドル、対数スケール)",
+                  color: "#E0E0E0",
+                },
+                min: 1000000,
+                ticks: {
+                  color: "#E0E0E0",
+                  callback: function (value, index, values) {
+                    if (value >= 1000000000)
+                      return (value / 1000000000).toFixed(1) + "B USD";
+                    if (value >= 1000000)
+                      return (value / 1000000).toFixed(1) + "M USD";
+                    if (value >= 1000)
+                      return (value / 1000).toFixed(1) + "K USD";
+                    return value.toFixed(0) + " USD";
+                  },
+                },
+                grid: { color: "#444444" },
+              },
+              y: { ticks: { color: "#E0E0E0" }, grid: { display: false } },
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    let valueUSD = context.raw;
+                    let valueJPY = valueUSD * JPY_PER_USD;
+                    let labelUSD_text, labelJPY_text;
+
+                    if (valueUSD >= 1000000000) {
+                      labelUSD_text =
+                        (valueUSD / 1000000000).toFixed(2) + "十億ドル";
+                    } else if (valueUSD >= 1000000) {
+                      labelUSD_text =
+                        (valueUSD / 1000000).toFixed(2) + "百万ドル";
+                    } else {
+                      labelUSD_text = valueUSD.toLocaleString("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                      });
+                    }
+
+                    if (valueJPY >= 100000000) {
+                      labelJPY_text =
+                        (valueJPY / 100000000).toFixed(1) + "億円";
+                    } else if (valueJPY >= 10000) {
+                      labelJPY_text = (valueJPY / 10000).toFixed(0) + "万円";
+                    } else {
+                      labelJPY_text = valueJPY.toLocaleString("ja-JP", {
+                        style: "currency",
+                        currency: "JPY",
+                      });
+                    }
+                    return `${
+                      context.chart.data.labels[context.dataIndex]
+                    }: ${labelUSD_text} (約${labelJPY_text})`;
+                  },
+                },
+              },
+            },
+            onClick: (event, elements) => {
+              if (elements.length > 0) {
+                const companyIndex = elements[0].index;
+                const companyName = adSpendChartData.labels[companyIndex];
+                const valueUSD =
+                  adSpendChartData.datasets[0].data[companyIndex];
+                const valueJPY = valueUSD * JPY_PER_USD;
+
+                let formattedUSD, formattedJPY;
+                if (valueUSD >= 1000000000)
+                  formattedUSD =
+                    (valueUSD / 1000000000).toFixed(2) + "十億ドル";
+                else if (valueUSD >= 1000000)
+                  formattedUSD = (valueUSD / 1000000).toFixed(2) + "百万ドル";
+                else
+                  formattedUSD = valueUSD.toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  });
+
+                if (valueJPY >= 100000000)
+                  formattedJPY = (valueJPY / 100000000).toFixed(1) + "億円";
+                else if (valueJPY >= 10000)
+                  formattedJPY = (valueJPY / 10000).toFixed(0) + "万円";
+                else
+                  formattedJPY = valueJPY.toLocaleString("ja-JP", {
+                    style: "currency",
+                    currency: "JPY",
+                  });
+
+                alert(
+                  `${companyName}の2023年広告費:\n${formattedUSD}\n(約 ${formattedJPY})`
+                );
+              }
+            },
+          },
+        });
+    </script>
+  </body>
+</html>
+
+<!-- 改めての注意点：
+
+動画IDと動画ソースの指定:
+FSD動画、Optimus動画: HTMLコード内の 'YOUR_FSD_VIDEO_ID_1'、'YOUR_FSD_VIDEO_ID_2' の部分は、実際のYouTube動画のIDに置き換えてください。
+新時代の運転体験（あなたのModel 3動画）: HTMLコード内の 'YOUR_MODEL3_VIDEO_SRC' の部分は、ローカル動画ファイルへの正しいパス（例: videos/my_experience.mp4 や my_experience.mp4）に置き換えてください。
+このHTMLファイルは、Tailwind CSSとChart.jsをインターネット経由で読み込んでいるため、表示するにはインターネット接続が必要です。
+ローカル動画を表示する場合は、HTMLファイルと動画ファイルの位置関係が重要になります。
+これで、ご希望の3つのセクションすべての動画が、クリックしたその場所で直接再生されるようになりました。
+ご確認ください。 -->
